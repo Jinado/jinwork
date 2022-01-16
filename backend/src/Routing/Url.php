@@ -2,131 +2,197 @@
 
 namespace Jinwork\Routing;
 
-/**
- * @since 1.0.0-alpha
- */
-class Url
+class Url extends UrlImmutable
 {
-    /**
-     * @var string
-     */
-    private string $url;
-
-    /**
-     * @var string
-     */
-    private string $path;
-
-    /**
-     * @var string
-     */
-    private string $authority;
-
-    /**
-     * @var string
-     */
-    private string $host;
-
-    /**
-     * @var string
-     */
-    private string $port;
-
-    /**
-     * @var string
-     */
-    private string $raw_query;
-
-    /**
-     * @var array
-     */
-    private array $parsed_query;
-
-    /**
-     * @var string
-     */
-    private string $fragment;
-
-    /**
-     * @var string
-     */
-    private string $scheme;
-
-    /**
-     * @var string
-     */
-    private string $username;
-
-    /**
-     * @var string
-     */
-    private string $password;
-
-    /**
-     * @since 1.0.0-alpha
-     */
-    public function __construct(string $url)
+    public static function createFromImmutableUrl(UrlImmutable $url_immutable): Url
     {
-        $this->parseUrl($url);
+        return new Url($url_immutable->getUrl());
     }
 
     /**
-     * @return string
-     * @since 1.0.0-alpha
-     */
-    public function getScheme(): string
-    {
-        return $this->scheme;
-    }
-
-    /**
-     * Parses the URL and breaks it up into parts
+     * Sets the host for the url and updates the current URL
      *
-     * @param string $url
+     * @param string $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setUrl(string $value): Url
+    {
+        $this->url = $value;
+        $this->parseUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the path for the url and updates the current URL
+     *
+     * @param string $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setPath(string $value): Url
+    {
+        $this->path = $value;
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the host for the url and updates the current URL
+     *
+     * @param string $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setHost(string $value): Url
+    {
+        $this->host = $value;
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the port for the url and updates the current URL
+     *
+     * @param int $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setPort(int $value): Url
+    {
+        $this->port = $value;
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the raw query for the url and updates the current URL as well as the parsed query
+     *
+     * @param string $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setRawQuery(string $value): Url
+    {
+        $this->raw_query = $value;
+        $this->updateParsedQuery();
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the parsed query for the url and updates the current URL as well as the raw query
+     *
+     * @param array $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setParsedQuery(array $value): Url
+    {
+        $this->parsed_query = $value;
+        $this->updateRawQuery();
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the scheme for the url and updates the current URL
+     *
+     * @param string $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setScheme(string $value): Url
+    {
+        $this->scheme = $value;
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the fragment for the url and updates the current URL
+     *
+     * @param string $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setFragment(string $value): Url
+    {
+        $this->fragment = $value;
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the username for the url and updates the current URL
+     *
+     * @param string $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setUsername(string $value): Url
+    {
+        $this->username = $value;
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Sets the password for the url and updates the current URL
+     *
+     * @param string $value
+     * @return Url
+     * @since 1.0.0-alpha
+     */
+    public function setPassword(string $value): Url
+    {
+        $this->password = $value;
+        $this->updateUrl();
+        return $this;
+    }
+
+    /**
+     * Updates the parsed query so that it is synced with the raw query
+     *
      * @return void
      * @since 1.0.0-alpha
      */
-    private function parseUrl(string $url)
+    private function updateParsedQuery()
     {
-        $matches = [];
-        $this->url = $url;
-
-        preg_match('@^(\w+)://@', $url, $matches);
-        $this->scheme = $matches[1] ?? null;
-
-        preg_match('@^\w+://(\w+:\w+\@)?([\w.-]+)@', $url, $matches);
-        $this->host = $schemeMatch[1] ?? null;
-
-        preg_match('@^\w+://(\w+:\w+\@)?[\w.]+:(\d+)@', $url, $matches);
-        $this->port = $schemeMatch[2] ?? 80;
-
-        preg_match('@^\w+://(\w+:\w+\@)?[\w.]+(:\d+|/)([/\w.-]+)(\?|#)@', $url, $matches);
-        $this->path = $schemeMatch[3] ?? null;
-
-        if($this->path) {
-            $this->path = $this->path[0] === '/' ? $this->path : "/$this->path";
-        }
-
-        preg_match('@\?([\w=&\[\]-]+)@', $url, $matches);
-        $this->raw_query = $schemeMatch[3] ?? null;
-
-        $this->parseQuery();
-
-        preg_match('@#([\w-]+)$@', $url, $matches);
-        $this->fragment = $schemeMatch[1] ?? null;
+        parse_str($this->raw_query, $this->parsed_query);
     }
 
     /**
-     * Parses the query if there is any
+     * Updates the raw query so that it is synced with the parsed query
      *
      * @return void
      * @since 1.0.0-alpha
      */
-    private function parseQuery()
+    private function updateRawQuery()
     {
-        if(!$this->raw_query) {
-            $this->parsed_query = [];
-            return;
-        }
+        
+    }
+
+    /**
+     * Updates the URL based on the values of all the different parts of the URL
+     *
+     * @return void
+     * @since 1.0.0-alpha
+     */
+    private function updateUrl()
+    {
+        $scheme   = $this->scheme ? $this->scheme . '://' : '';
+        $host     = $this->host ?? '';
+        $port     = $this->port ? ':' . $this->port : '';
+        $user     = $this->user ?? '';
+        $pass     = $this->password ? ':' . $this->password  : '';
+        $pass     = ($user || $pass) ? "$pass@" : '';
+        $path     = $this->path ?? '';
+        $query    = $this->raw_query ? '?' . $this->raw_query : '';
+        $fragment = $this->fragment ? '#' . $this->fragment : '';
+
+        if(":80" === $port) $port = '';
+
+        $this->url = "$scheme$user$pass$host$port$path$query$fragment";
     }
 }
