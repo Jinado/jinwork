@@ -2,8 +2,13 @@
 
 namespace Jinwork\Routing;
 
+use Jinwork\Exception\InvalidUrlException;
+
 class Url extends UrlImmutable
 {
+    /**
+     * @throws InvalidUrlException
+     */
     public static function createFromImmutableUrl(UrlImmutable $url_immutable): Url
     {
         return new Url($url_immutable->getUrl());
@@ -14,6 +19,7 @@ class Url extends UrlImmutable
      *
      * @param string $value
      * @return Url
+     * @throws InvalidUrlException
      * @since 1.0.0-alpha
      */
     public function setUrl(string $value): Url
@@ -166,11 +172,13 @@ class Url extends UrlImmutable
      * Updates the raw query so that it is synced with the parsed query
      *
      * @return void
-     * @since 1.0.0-alpha
+     * @since 1.1.0-alpha
      */
     private function updateRawQuery()
     {
-        
+        $this->raw_query = '';
+        foreach($this->parsed_query as $key => $value) $this->raw_query .= "$key=$value&";
+        $this->raw_query = !$this->raw_query ? NULL : substr($this->raw_query, 0, -1);
     }
 
     /**

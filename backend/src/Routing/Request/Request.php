@@ -2,7 +2,14 @@
 
 namespace Jinwork\Routing\Request;
 
-use Jinwork\Config;
+use Jinwork\Exception\InvalidUrlException;
+use Jinwork\Routing\UrlImmutable;
+use SimpleXMLElement;
+use stdClass;
+
+require_once __DIR__ . '/../UrlImmutable.php';
+require_once __DIR__ . '/RequestMethod.php';
+require_once __DIR__ . '/../../Exceptions/InvalidUrlException.php';
 
 /**
  * @since 1.0.0-alpha
@@ -10,14 +17,9 @@ use Jinwork\Config;
 class Request
 {
     /**
-     * @var string // TODO: Change to URL class
+     * @var UrlImmutable
      */
-    private string $url;
-
-    /**
-     * @var string
-     */
-    private string $request_uri;
+    private UrlImmutable $url;
 
     /**
      * @var array
@@ -25,65 +27,47 @@ class Request
     private array $headers;
 
     /**
-     * @var string|null
-     */
-    private ?string $content_type;
-
-    /**
      * @var RequestMethod|null
      */
     private ?RequestMethod $request_method;
 
     /**
-     * @var array
+     * @var array|null
      */
-    private array $body;
+    private ?array $body;
 
     /**
-     * @var array
+     * @var string|null
      */
-    private array $query_params;
+    private ?string $raw_body;
 
     /**
-     * @var Config
+     * Constructs a request object for the current request
+     *
+     * @throws InvalidUrlException
+     * @since 1.1.0-alpha
      */
-    private Config $config;
-
-    public function __construct(Config $config)
+    public function __construct()
     {
         $this->initializeHeaders();
-        $this->content_type = $this->getHeader('Content-Type');
         $this->request_method = RequestMethod::tryFrom(strtolower($_SERVER['REQUEST_METHOD']));
-        $this->config = $config;
 
-        $is_ssl = $this->config->getSafe('is_ssl');
+        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
-        if($is_ssl) {
-            $this->url = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $this->url = new UrlImmutable($url);
+
+        if("application/x-www-form-urlencoded" === $this->getHeader('Content-Type')) {
+            $this->body = $_POST;
         } else {
-            $this->url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+            $this->raw_body = file_get_contents('php://input') ?: NULL;
         }
-
-        $this->request_uri = $_SERVER['REQUEST_URI'];
-
-        $this->body = $_POST;
-        $this->query_params = $_GET;
     }
 
     /**
-     * @return string
+     * @return UrlImmutable
      * @since 1.0.0-alpha
      */
-    public function getRequestUri(): string
-    {
-        return $this->request_uri;
-    }
-
-    /**
-     * @return string
-     * @since 1.0.0-alpha
-     */
-    public function getUrl(): string
+    public function getUrl(): UrlImmutable
     {
         return $this->url;
     }
@@ -100,12 +84,13 @@ class Request
     /**
      * Gets the value for the specified header
      *
-     * @param $key
+     * @param string $key
      * @return string|null
-     * @since 1.0.0-alpha
+     * @since 1.1.0-alpha
      */
-    public function getHeader($key): string|null
+    public function getHeader(string $key): string|null
     {
+        $key = ucwords($key, '-');
         return $this->headers[$key] ?? null;
     }
 
@@ -119,16 +104,7 @@ class Request
     }
 
     /**
-     * @return string
-     * @since 1.0.0-alpha
-     */
-    public function getContentType(): string
-    {
-        return $this->content_type;
-    }
-
-    /**
-     * Returns the request body
+     * Returns the request body. Only contains data sent as <b>application/x-www-form-urlencoded</b>
      *
      * @return array
      * @since 1.0.0-alpha
@@ -139,71 +115,130 @@ class Request
     }
 
     /**
-     * Returns the query parameters
+     * Returns the request body. Contains data sent as something other than <b>application/x-www-form-urlencoded<b>
      *
-     * @return array
-     * @since 1.0.0-alpha
+     * @return string|null
+     * @since 1.1.0-alpha
      */
-    public function getQueryParameters(): array
+    public function getRawBody(): ?string
     {
-        return $this->query_params;
+        return $this->raw_body;
     }
 
     /**
-     * Returns the parameters based on the request method
+     * Returns the body as JSON
      *
-     * @return array
+     * @return stdClass
+     * @since 1.1.0-alpha
+     */
+    public function getBodyAsJSON(): stdClass
+    {
+        if("application/json" !== $this->getHeader('Content-Type')) return new stdClass();
+
+        return json_decode($this->raw_body);
+    }
+
+    /**
+     * Returns the body as XML
+     *
+     * @return SimpleXMLElement|null
+     * @since 1.1.0-alpha
+     */
+    public function getBodyAsXML(): ?SimpleXMLElement
+    {
+        if("application/xml" !== $this->getHeader('Content-Type')) return NULL;
+
+        return simplexml_load_string($this->raw_body) ?: NULL;
+    }
+
+    /**
+     * Returns the parameters based on the request method.<br>
+     * Currently supports only <b>POST</b> and <b>GET</b> requests
+     *
+     * @return string|array
      * @since 1.0.0-alpha
      */
-    public function getParameters(): array
+    public function getParameters(): string|array
     {
         // TODO: Define the other request methods
 
-        return match ($this->request_method) {
-            RequestMethod::POST => $this->body,
-            RequestMethod::GET => $this->query_params,
-            default => [],
-        };
+        switch($this->request_method) {
+            case RequestMethod::GET:
+                return $this->url->getParsedQuery();
+            case RequestMethod::POST:
+                if("application/x-www-form-urlencoded" === $this->getHeader('Content-Type')) {
+                    return $this->body;
+                }
+
+                return $this->raw_body;
+            default:
+                return [];
+        }
+
+        return [];
     }
 
     /**
-     * Returns a specific body parameter, or <b>NULL</b> if the parameter doesn't exist
+     * Returns a specific body parameter, or <b>NULL</b> if the parameter doesn't exist.
+     * Supports dot notation for nested values
      *
      * @param string $key
      * @return string|int|float|array|null
-     * @since 1.0.0-alpha
+     * @since 1.1.0-alpha
      */
     public function getBodyParam(string $key): string|int|float|array|null
     {
-        return $this->body[$key] ?? null;
+        $keys = explode('.', $key);
+
+        if(count($keys) === 1) return $this->body[$key] ?? NULL;
+
+        $value = [];
+        foreach ($keys as $_key) {
+            $value = $this->body[$_key] ?? NULL;
+            if(is_string($value) || NULL === $value) return $value;
+        }
+
+        return $value ?? NULL;
     }
 
     /**
-     * Retuns a specific query parameter, or <b>NULL</b> if the parameter doesn't exist
+     * Returns a specific query parameter, or <b>NULL</b> if the parameter doesn't exist.
+     * Supports dot notation for nested values
      *
      * @param string $key
      * @return string|int|float|array|null
-     * @since 1.0.0-alpha
+     * @since 1.1.0-alpha
      */
     public function getQueryParameter(string $key): string|int|float|array|null
     {
-        return $this->query_params[$key] ?? null;
+        $query_params = $this->url->getParsedQuery();
+        $keys = explode('.', $key);
+
+        if(count($keys) === 1) return $query_params[$key] ?? NULL;
+
+        $value = [];
+        foreach ($keys as $_key) {
+            $value = $query_params[$_key] ?? NULL;
+            if(is_string($value) || NULL === $value) return $value;
+        }
+
+        return $value ?? NULL;
     }
 
     /**
      * Returns the specific parameter based on the request method. Returns <b>NULL</b>
-     * if the parameter doesn't exist
+     * if the parameter doesn't exist. Supports dot notation for nested values.
      *
      * @param string $key
      * @return string|int|float|array|null
-     * @since 1.0.0-alpha
+     * @since 1.1.0-alpha
      */
     public function getParameter(string $key): string|int|float|array|null
     {
         return match ($this->request_method) {
-            RequestMethod::POST => $this->body[$key] ?? null,
-            RequestMethod::GET => $this->query_params[$key] ?? null,
-            default => []
+            RequestMethod::POST => $this->getBodyParam($key),
+            RequestMethod::GET => $this->getQueryParameter($key),
+            default => null
         };
     }
 

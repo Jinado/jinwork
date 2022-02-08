@@ -2,6 +2,8 @@
 
 namespace Jinwork\Routing;
 
+use Jinwork\Exception\InvalidUrlException;
+
 /**
  * @since 1.0.0-alpha
  */
@@ -58,6 +60,7 @@ class UrlImmutable
     protected ?string $password;
 
     /**
+     * @throws InvalidUrlException
      * @since 1.0.0-alpha
      */
     public function __construct(string $url)
@@ -160,6 +163,7 @@ class UrlImmutable
      * Parses the url
      *
      * @return void
+     * @throws InvalidUrlException
      * @since 1.0.0-alpha
      */
     protected function parseUrl()
