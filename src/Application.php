@@ -2,11 +2,12 @@
 
 namespace Jinwork;
 
+use JetBrains\PhpStorm\NoReturn;
+use Jinapps\IndexController;
+use Jinwork\Controller\ControllerInterface;
 use Jinwork\Routing\Request\Request;
 use Jinwork\Routing\Response;
 use Jinwork\Routing\Router;
-
-require_once '../vendor/autoload.php';
 
 /**
  * @since 1.0.0-alpha
@@ -17,9 +18,28 @@ class Application
 
     protected ?Router $router;
 
-    public function __construct(?Router $router = null)
+    public function __construct()
     {
-        if($router) $this->router = $router;
+        global $router;
+
+        $controllerLocation =  __DIR__ . '/../../../../src/Controller/';
+        $files = scandir($controllerLocation);
+
+        foreach($files as $file) {
+            if(!preg_match('/\w+Controller\.php/', $file)) continue;
+            $fileName = $controllerLocation . $file;
+            $className = substr($file, 0, -4);
+            include $fileName;
+        }
+
+        $declared_classes = get_declared_classes();
+        foreach($declared_classes as $declared_class) {
+            if(in_array(ControllerInterface::class, class_implements($declared_class))) {
+                new $declared_class($router);
+            }
+        }
+
+        $this->router = $router;
     }
 
     /**
@@ -39,7 +59,7 @@ class Application
      * @return void
      * @since 1.1.0-alpha
      */
-    public function run()
+    #[NoReturn] public function run()
     {
         if(!$this->router) {
             // TODO: Throw exception

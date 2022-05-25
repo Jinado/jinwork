@@ -19,9 +19,9 @@ class Route
     protected array $requestMethods;
 
     /**
-     * @var Closure
+     * @var array|Closure
      */
-    protected Closure $callback;
+    protected array|Closure $callback;
 
     /**
      * @param string $url
@@ -93,6 +93,6 @@ class Route
      */
     public function call(Request $request)
     {
-        $this->callback->call($this, $request, new Response());
+        call_user_func($this->callback, $request, new Response());
     }
 }
