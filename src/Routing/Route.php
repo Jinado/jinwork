@@ -6,9 +6,6 @@ use Closure;
 use Jinwork\Routing\Request\Request;
 use Jinwork\Routing\Request\RequestMethod;
 
-require_once __DIR__ . '/Request/Request.php';
-require_once __DIR__ . '/Response/Response.php';
-
 class Route
 {
     /**

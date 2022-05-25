@@ -6,6 +6,8 @@ use Jinwork\Routing\Request\Request;
 use Jinwork\Routing\Response;
 use Jinwork\Routing\Router;
 
+require_once '../vendor/autoload.php';
+
 /**
  * @since 1.0.0-alpha
  */

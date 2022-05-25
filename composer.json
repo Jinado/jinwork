@@ -1,0 +1,17 @@
+{
+    "name": "jinado/jinwork",
+    "description": "A PHP framework for creating a web server",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Jinado\\Jinwork\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Johannes Emmoth",
+            "email": "johannes.emmoth@gmail.com"
+        }
+    ],
+    "require": {}
+}

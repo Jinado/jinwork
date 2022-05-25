@@ -7,10 +7,6 @@ use Jinwork\Routing\UrlImmutable;
 use SimpleXMLElement;
 use stdClass;
 
-require_once __DIR__ . '/../UrlImmutable.php';
-require_once __DIR__ . '/RequestMethod.php';
-require_once __DIR__ . '/../../Exceptions/InvalidUrlException.php';
-
 /**
  * @since 1.0.0-alpha
  */

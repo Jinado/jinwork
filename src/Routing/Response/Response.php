@@ -4,8 +4,6 @@ namespace Jinwork\Routing;
 
 use JetBrains\PhpStorm\NoReturn;
 
-require_once __DIR__ . '/StatusCode.php';
-
 /**
  * @since 1.1.0-alpha
  */
