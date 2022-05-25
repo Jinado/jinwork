@@ -13,5 +13,7 @@
             "email": "johannes.emmoth@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=8.0"
+    }
 }
