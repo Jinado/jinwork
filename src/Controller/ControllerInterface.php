@@ -6,5 +6,6 @@ use Jinado\Jinwork\Routing\Router;
 
 interface ControllerInterface
 {
-    public function __construct(Router $router);
+    function __construct(Router $router);
+    function instantiateRoutes();
 }
