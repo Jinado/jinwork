@@ -1,6 +1,6 @@
 <?php
 
-namespace Jinwork\Routing;
+namespace Jinado\Jinwork\Routing\Response;
 
 use JetBrains\PhpStorm\Deprecated;
 

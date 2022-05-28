@@ -1,6 +1,6 @@
 <?php
 
-namespace Jinwork\Routing;
+namespace Jinado\Jinwork\Routing;
 
 class Router
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Jinwork\Routing;
+namespace Jinado\Jinwork\Routing;
 
-use Jinwork\Exception\InvalidUrlException;
+use Jinado\Jinwork\Exception\InvalidUrlException;
 
 /**
  * @since 1.0.0-alpha
@@ -166,7 +166,7 @@ class UrlImmutable
      * @throws InvalidUrlException
      * @since 1.0.0-alpha
      */
-    protected function parseUrl()
+    protected function parseUrl(): void
     {
         $parsed_url = parse_url($this->url);
         if(FALSE === $parsed_url) {

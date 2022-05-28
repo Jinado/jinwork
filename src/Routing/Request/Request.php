@@ -1,14 +1,11 @@
 <?php
 
-namespace Jinwork\Routing\Request;
+namespace Jinado\Jinwork\Routing\Request;
 
-use Jinwork\Exception\InvalidUrlException;
-use Jinwork\Routing\UrlImmutable;
+use Jinado\Jinwork\Exception\InvalidUrlException;
+use Jinado\Jinwork\Routing\UrlImmutable;
 use SimpleXMLElement;
 use stdClass;
-
-require_once __DIR__ . '/../UrlImmutable.php';
-require_once __DIR__ . '/../../Exceptions/InvalidUrlException.php';
 
 /**
  * @since 1.0.0-alpha
@@ -173,8 +170,6 @@ class Request
             default:
                 return [];
         }
-
-        return [];
     }
 
     /**

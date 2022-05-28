@@ -1,10 +1,11 @@
 <?php
 
-namespace Jinwork\Routing;
+namespace Jinado\Jinwork\Routing;
 
 use Closure;
-use Jinwork\Routing\Request\Request;
-use Jinwork\Routing\Request\RequestMethod;
+use Jinado\Jinwork\Routing\Request\Request;
+use Jinado\Jinwork\Routing\Request\RequestMethod;
+use Jinado\Jinwork\Routing\Response\Response;
 
 class Route
 {
@@ -88,10 +89,11 @@ class Route
     /**
      * Calls the callback with the appropriate arguments set
      *
+     * @param Request $request
      * @return void
      * @since 1.1.0-alpha
      */
-    public function call(Request $request)
+    public function call(Request $request): void
     {
         call_user_func($this->callback, $request, new Response());
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Jinwork\Routing;
+namespace Jinado\Jinwork\Routing;
 
-use Jinwork\Exception\InvalidUrlException;
+use Jinado\Jinwork\Exception\InvalidUrlException;
 
 class Url extends UrlImmutable
 {
@@ -163,7 +163,7 @@ class Url extends UrlImmutable
      * @return void
      * @since 1.0.0-alpha
      */
-    private function updateParsedQuery()
+    private function updateParsedQuery(): void
     {
         parse_str($this->raw_query, $this->parsed_query);
     }
@@ -174,7 +174,7 @@ class Url extends UrlImmutable
      * @return void
      * @since 1.1.0-alpha
      */
-    private function updateRawQuery()
+    private function updateRawQuery(): void
     {
         $this->raw_query = '';
         foreach($this->parsed_query as $key => $value) $this->raw_query .= "$key=$value&";
@@ -187,7 +187,7 @@ class Url extends UrlImmutable
      * @return void
      * @since 1.0.0-alpha
      */
-    private function updateUrl()
+    private function updateUrl(): void
     {
         $scheme   = $this->scheme ? $this->scheme . '://' : '';
         $host     = $this->host ?? '';

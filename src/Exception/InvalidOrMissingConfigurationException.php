@@ -1,6 +1,6 @@
 <?php
 
-namespace Jinwork\Exception;
+namespace Jinado\Jinwork\Exception;
 
 use Exception;
 use Throwable;
@@ -8,7 +8,7 @@ use Throwable;
 /**
  * @since 1.0.0-alpha
  */
-class MissingConfigFileException extends Exception
+class InvalidOrMissingConfigurationException extends Exception
 {
     /**
      * @param string $message
@@ -20,7 +20,7 @@ class MissingConfigFileException extends Exception
     public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null)
     {
         if(!$message) {
-            $message = 'Missing config file. The config file needs to exist can be empty, but it has to exist';
+            $message = 'Invalid or missing configuration';
         }
 
         parent::__construct($message, $code, $previous);

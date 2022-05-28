@@ -1,6 +1,6 @@
 <?php
 
-namespace Jinwork\Routing\Request;
+namespace Jinado\Jinwork\Routing\Request;
 
 enum RequestMethod: string
 {

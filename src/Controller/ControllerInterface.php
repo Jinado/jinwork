@@ -1,8 +1,8 @@
 <?php
 
-namespace Jinwork\Controller;
+namespace Jinado\Jinwork\Controller;
 
-use Jinwork\Routing\Router;
+use Jinado\Jinwork\Routing\Router;
 
 interface ControllerInterface
 {

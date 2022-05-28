@@ -1,13 +1,13 @@
 <?php
 
-namespace Jinwork;
+namespace Jinado\Jinwork;
 
 use JetBrains\PhpStorm\NoReturn;
-use Jinapps\IndexController;
-use Jinwork\Controller\ControllerInterface;
-use Jinwork\Routing\Request\Request;
-use Jinwork\Routing\Response;
-use Jinwork\Routing\Router;
+use Jinado\Jinwork\Controller\ControllerInterface;
+use Jinado\Jinwork\Exception\InvalidOrMissingConfigurationException;
+use Jinado\Jinwork\Routing\Request\Request;
+use Jinado\Jinwork\Routing\Response\Response;
+use Jinado\Jinwork\Routing\Router;
 
 /**
  * @since 1.0.0-alpha
@@ -18,11 +18,18 @@ class Application
 
     protected ?Router $router;
 
+    /**
+     * @throws InvalidOrMissingConfigurationException
+     */
     public function __construct()
     {
+        if(!defined('PROJECT_SRC') || !is_dir(PROJECT_SRC)) {
+            throw new InvalidOrMissingConfigurationException();
+        }
+
         global $router;
 
-        $controllerLocation =  __DIR__ . '/../../../../src/Controller/';
+        $controllerLocation =  PROJECT_SRC . '/Controller/';
         $files = scandir($controllerLocation);
 
         foreach($files as $file) {

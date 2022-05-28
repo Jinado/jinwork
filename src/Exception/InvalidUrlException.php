@@ -1,6 +1,6 @@
 <?php
 
-namespace Jinwork\Exception;
+namespace Jinado\Jinwork\Exception;
 
 use Exception;
 use Throwable;
