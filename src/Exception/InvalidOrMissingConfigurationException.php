@@ -6,7 +6,7 @@ use Exception;
 use Throwable;
 
 /**
- * @since 1.0.0-alpha
+ * @since 2.0.0-alpha
  */
 class InvalidOrMissingConfigurationException extends Exception
 {

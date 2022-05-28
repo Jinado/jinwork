@@ -10,12 +10,12 @@ use ReflectionClass;
 use ReflectionException;
 
 /**
- * @since dev
+ * @since 2.0.0-alpha
  */
 abstract class ReflectionResolver
 {
     /**
-     * @since dev
+     * @since 2.0.0-alpha
      */
     private function __construct() {}
 
@@ -39,8 +39,11 @@ abstract class ReflectionResolver
     }
 
     /**
+     * Creates and returns an instance of a controller
+     *
      * @throws ReflectionException
      * @throws InvalidRouteException
+     * @since 2.0.0-alpha
      */
     private static function getControllerInstance(string $className, array $args = []): Controller
     {
@@ -92,16 +95,28 @@ abstract class ReflectionResolver
         return $instance;
     }
 
+    /**
+     * @return string
+     * @since 2.0.0-alpha
+     */
     private static function getControllerRouteMethodNameRegex(): string
     {
         return '/^\w+Route$/';
     }
 
+    /**
+     * @return string
+     * @since 2.0.0-alpha
+     */
     private static function getInitialControllerRouteRegex(): string
     {
         return '/@Jinado\\\Jinwork\\\Routing\\\Route.+/';
     }
 
+    /**
+     * @return string
+     * @since 2.0.0-alpha
+     */
     private static function getControllerRouteRegex(): string
     {
         return <<<REGEXP

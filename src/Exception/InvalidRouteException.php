@@ -6,7 +6,7 @@ use Exception;
 use Throwable;
 
 /**
- * @since dev
+ * @since 2.0.0-alpha
  */
 class InvalidRouteException extends Exception
 {

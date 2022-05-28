@@ -16,13 +16,14 @@ use ReflectionException;
  */
 class Application
 {
-    private const JINWORK_VERSION = '1.1.0-alpha';
+    private const JINWORK_VERSION = '2.0.0-alpha';
 
     protected ?Router $router;
 
     /**
      * @throws InvalidOrMissingConfigurationException|ReflectionException
      * @throws Exception\InvalidRouteException
+     * @since 2.0.0-alpha
      */
     public function __construct()
     {
@@ -49,17 +50,6 @@ class Application
             }
         }
 
-        $this->router = $router;
-    }
-
-    /**
-     * Registers the class to use a Router
-     *
-     * @param Router $router
-     * @since 1.1.0-alpha
-     */
-    public function registerRouter(Router $router): void
-    {
         $this->router = $router;
     }
 
