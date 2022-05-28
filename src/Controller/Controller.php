@@ -11,4 +11,8 @@ abstract class Controller
     public function __construct(Router $router) {
         $this->router = $router;
     }
+
+    public function getRouter(): Router{
+        return $this->router;
+    }
 }

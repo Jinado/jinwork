@@ -22,6 +22,7 @@ class Application
 
     /**
      * @throws InvalidOrMissingConfigurationException|ReflectionException
+     * @throws Exception\InvalidRouteException
      */
     public function __construct()
     {
@@ -29,7 +30,7 @@ class Application
             throw new InvalidOrMissingConfigurationException();
         }
 
-        global $router;
+       $router = new Router();
 
         $controllerLocation =  PROJECT_SRC . '/Controller/';
         $files = scandir($controllerLocation);
@@ -44,7 +45,7 @@ class Application
         $declared_classes = get_declared_classes();
         foreach($declared_classes as $declared_class) {
             if(in_array(Controller::class, class_parents($declared_class))) {
-                ReflectionResolver::getInstance($declared_class);
+                ReflectionResolver::createNewInstance($declared_class, $router);
             }
         }
 
