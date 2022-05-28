@@ -5,6 +5,7 @@ namespace Jinado\Jinwork;
 use JetBrains\PhpStorm\NoReturn;
 use Jinado\Jinwork\Controller\ControllerInterface;
 use Jinado\Jinwork\Exception\InvalidOrMissingConfigurationException;
+use Jinado\Jinwork\Reflection\ReflectionResolver;
 use Jinado\Jinwork\Routing\Request\Request;
 use Jinado\Jinwork\Routing\Response\Response;
 use Jinado\Jinwork\Routing\Router;
@@ -23,7 +24,7 @@ class Application
      */
     public function __construct()
     {
-        if(!defined('PROJECT_SRC') || !is_dir(PROJECT_SRC)) {
+        if(!defined('PROJECT_SRC') || !is_dir(PROJECT_SRC) || !is_readable(PROJECT_SRC)) {
             throw new InvalidOrMissingConfigurationException();
         }
 
@@ -42,7 +43,7 @@ class Application
         $declared_classes = get_declared_classes();
         foreach($declared_classes as $declared_class) {
             if(in_array(ControllerInterface::class, class_implements($declared_class))) {
-                new $declared_class($router);
+                ReflectionResolver::getInstance($declared_class);
             }
         }
 
