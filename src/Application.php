@@ -69,9 +69,8 @@ class Application
 
         $request = new Request();
         foreach($routes as $route) {
-            // TODO: Make sure the request method matches
             // TODO: Handle cool URLs like /some-user/:id and whatnot
-            if($route->getUrl() === $request->getUrl()->getPath()) {
+            if($route->getUrl() === $request->getUrl()->getPath() && in_array($request->getRequestMethod(), $route->getRequestMethods())) {
                 $route->call($request);
             }
         }
