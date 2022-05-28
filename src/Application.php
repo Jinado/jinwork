@@ -57,7 +57,7 @@ class Application
      * Runs the application. Basically listens for any connection to any of the specific routes
      *
      * @return void
-     * @since 1.1.0-alpha
+     * @since 2.1.0-alpha
      */
     #[NoReturn] public function run(): void
     {
@@ -69,9 +69,8 @@ class Application
 
         $request = new Request();
         foreach($routes as $route) {
-            // TODO: Make sure the request method matches
             // TODO: Handle cool URLs like /some-user/:id and whatnot
-            if($route->getUrl() === $request->getUrl()->getPath()) {
+            if($route->getUrl() === $request->getUrl()->getPath() && in_array($request->getRequestMethod(), $route->getRequestMethods())) {
                 $route->call($request);
             }
         }
