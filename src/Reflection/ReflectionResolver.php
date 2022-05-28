@@ -6,7 +6,6 @@ use Jinado\Jinwork\Controller\Controller;
 use Jinado\Jinwork\Exception\InvalidRouteException;
 use Jinado\Jinwork\Routing\Request\RequestMethod;
 use Jinado\Jinwork\Routing\Route;
-use MongoDB\BSON\Regex;
 use ReflectionClass;
 use ReflectionException;
 
@@ -57,7 +56,6 @@ abstract class ReflectionResolver
 
         foreach($methods as $method) {
             if(!preg_match($methodNameRegex, $method->getName())) continue;
-            var_dump($method->getDocComment());
 
             $fullMethodName = $reflectionClass->getName() . '::' . $method->getName();
 
