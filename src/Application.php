@@ -3,12 +3,13 @@
 namespace Jinado\Jinwork;
 
 use JetBrains\PhpStorm\NoReturn;
-use Jinado\Jinwork\Controller\ControllerInterface;
+use Jinado\Jinwork\Controller\Controller;
 use Jinado\Jinwork\Exception\InvalidOrMissingConfigurationException;
 use Jinado\Jinwork\Reflection\ReflectionResolver;
 use Jinado\Jinwork\Routing\Request\Request;
 use Jinado\Jinwork\Routing\Response\Response;
 use Jinado\Jinwork\Routing\Router;
+use ReflectionException;
 
 /**
  * @since 1.0.0-alpha
@@ -20,7 +21,7 @@ class Application
     protected ?Router $router;
 
     /**
-     * @throws InvalidOrMissingConfigurationException
+     * @throws InvalidOrMissingConfigurationException|ReflectionException
      */
     public function __construct()
     {
@@ -42,7 +43,7 @@ class Application
 
         $declared_classes = get_declared_classes();
         foreach($declared_classes as $declared_class) {
-            if(in_array(ControllerInterface::class, class_implements($declared_class))) {
+            if(in_array(Controller::class, class_parents($declared_class))) {
                 ReflectionResolver::getInstance($declared_class);
             }
         }
@@ -56,7 +57,7 @@ class Application
      * @param Router $router
      * @since 1.1.0-alpha
      */
-    public function registerRouter(Router $router)
+    public function registerRouter(Router $router): void
     {
         $this->router = $router;
     }
@@ -67,7 +68,7 @@ class Application
      * @return void
      * @since 1.1.0-alpha
      */
-    #[NoReturn] public function run()
+    #[NoReturn] public function run(): void
     {
         if(!$this->router) {
             // TODO: Throw exception

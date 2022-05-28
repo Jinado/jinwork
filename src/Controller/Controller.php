@@ -10,8 +10,5 @@ abstract class Controller
 
     public function __construct(Router $router) {
         $this->router = $router;
-        $this->instantiateRoutes();
     }
-
-    protected function instantiateRoutes() {}
 }
