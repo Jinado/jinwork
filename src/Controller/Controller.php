@@ -4,7 +4,7 @@ namespace Jinado\Jinwork\Controller;
 
 use Jinado\Jinwork\Routing\Router;
 
-abstract class Controller implements ControllerInterface
+abstract class Controller
 {
     protected Router $router;
 
@@ -12,4 +12,6 @@ abstract class Controller implements ControllerInterface
         $this->router = $router;
         $this->instantiateRoutes();
     }
+
+    protected function instantiateRoutes() {}
 }
