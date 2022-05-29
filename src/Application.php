@@ -8,6 +8,7 @@ use Jinado\Jinwork\Exception\InvalidOrMissingConfigurationException;
 use Jinado\Jinwork\Reflection\ReflectionResolver;
 use Jinado\Jinwork\Routing\Request\Request;
 use Jinado\Jinwork\Routing\Response\Response;
+use Jinado\Jinwork\Routing\RouteMatcher;
 use Jinado\Jinwork\Routing\Router;
 use ReflectionException;
 
@@ -57,21 +58,19 @@ class Application
      * Runs the application. Basically listens for any connection to any of the specific routes
      *
      * @return void
-     * @since 1.1.0-alpha
+     * @since 2.2.0-alpha
      */
     #[NoReturn] public function run(): void
     {
-        if(!$this->router) {
-            // TODO: Throw exception
-        }
-
         $routes = $this->router->getRoutes();
 
-        $request = new Request();
+        $routeMatcher = new RouteMatcher(Request: new Request());
         foreach($routes as $route) {
             // TODO: Handle cool URLs like /some-user/:id and whatnot
-            if($route->getUrl() === $request->getUrl()->getPath() && in_array($request->getRequestMethod(), $route->getRequestMethods())) {
-                $route->call($request);
+            $routeMatcher->setRoute($route);
+
+            if($routeMatcher->matchesRequest()) {
+                $route->call($routeMatcher->getRequest());
             }
         }
 

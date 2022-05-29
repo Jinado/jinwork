@@ -2,7 +2,7 @@
 
 namespace Jinado\Jinwork\Tests;
 
-use Jinado\Jinwork\Routing\Url;
+use Jinado\Jinwork\Routing\Url\Url;
 use PHPUnit\Framework\TestCase;
 
 class UrlTest extends TestCase

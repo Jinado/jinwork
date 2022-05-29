@@ -1,6 +1,6 @@
 <?php
 
-namespace Jinado\Jinwork\Routing;
+namespace Jinado\Jinwork\Routing\Url;
 
 use Jinado\Jinwork\Exception\InvalidUrlException;
 

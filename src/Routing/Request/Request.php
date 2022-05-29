@@ -3,7 +3,7 @@
 namespace Jinado\Jinwork\Routing\Request;
 
 use Jinado\Jinwork\Exception\InvalidUrlException;
-use Jinado\Jinwork\Routing\UrlImmutable;
+use Jinado\Jinwork\Routing\Url\UrlImmutable;
 use SimpleXMLElement;
 use stdClass;
 
@@ -13,7 +13,7 @@ use stdClass;
 class Request
 {
     /**
-     * @var UrlImmutable
+     * @var \Jinado\Jinwork\Routing\Url\UrlImmutable
      */
     private UrlImmutable $url;
 

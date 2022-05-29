@@ -3,10 +3,12 @@
 namespace Jinado\Jinwork\Routing;
 
 use Closure;
+use JetBrains\PhpStorm\NoReturn;
 use Jinado\Jinwork\Exception\InvalidUrlException;
 use Jinado\Jinwork\Routing\Request\Request;
 use Jinado\Jinwork\Routing\Request\RequestMethod;
 use Jinado\Jinwork\Routing\Response\Response;
+use Jinado\Jinwork\Routing\Url\UrlImmutable;
 
 class Route
 {
@@ -92,9 +94,9 @@ class Route
      *
      * @param Request $request
      * @return void
-     * @since 1.1.0-alpha
+     * @since 2.2.0-alpha
      */
-    public function call(Request $request): void
+    #[NoReturn] public function call(Request $request): void
     {
         call_user_func($this->callback, $request, new Response());
     }
