@@ -3,6 +3,7 @@
 namespace Jinado\Jinwork\Routing;
 
 use Closure;
+use Jinado\Jinwork\Exception\InvalidUrlException;
 use Jinado\Jinwork\Routing\Request\Request;
 use Jinado\Jinwork\Routing\Request\RequestMethod;
 use Jinado\Jinwork\Routing\Response\Response;
@@ -10,9 +11,9 @@ use Jinado\Jinwork\Routing\Response\Response;
 class Route
 {
     /**
-     * @var string
+     * @var UrlImmutable
      */
-    protected string $url;
+    protected UrlImmutable $url;
 
     /**
      * @var RequestMethod[]
@@ -28,12 +29,11 @@ class Route
      * @param string $url
      * @param RequestMethod[] $requestMethods
      * @param callable $callback
+     * @throws InvalidUrlException
      */
     public function __construct(string $url, array $requestMethods, callable $callback)
     {
-        // TODO: Validate the url
-
-        $this->url = $url;
+        $this->url = new UrlImmutable($url);
         $this->requestMethods = $requestMethods;
         $this->callback = $callback;
     }
@@ -41,10 +41,10 @@ class Route
     /**
      * Returns the URL for this route
      *
-     * @return string
+     * @return UrlImmutable
      * @since 1.1.0-alpha
      */
-    public function getUrl(): string
+    public function getUrl(): UrlImmutable
     {
         return $this->url;
     }
@@ -65,11 +65,12 @@ class Route
      *
      * @param string $url
      * @return Route
+     * @throws InvalidUrlException
      * @since 1.1.0-alpha
      */
     public function setUrl(string $url): Route
     {
-        $this->url = $url;
+        $this->url = new UrlImmutable($url);
         return $this;
     }
 

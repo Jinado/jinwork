@@ -192,7 +192,7 @@ class Url extends UrlImmutable
         $scheme   = $this->scheme ? $this->scheme . '://' : '';
         $host     = $this->host ?? '';
         $port     = $this->port ? ':' . $this->port : '';
-        $user     = $this->user ?? '';
+        $user     = $this->username ?? '';
         $pass     = $this->password ? ':' . $this->password  : '';
         $pass     = ($user || $pass) ? "$pass@" : '';
         $path     = $this->path ?? '';

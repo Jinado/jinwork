@@ -40,15 +40,18 @@ class Request
     /**
      * Constructs a request object for the current request
      *
+     * @param null|array $requestData
      * @throws InvalidUrlException
-     * @since 1.1.0-alpha
+     * @since 2.2.0-alpha
      */
-    public function __construct()
+    public function __construct(?array $requestData = null)
     {
-        $this->initializeHeaders();
-        $this->request_method = RequestMethod::tryFrom(strtolower($_SERVER['REQUEST_METHOD']));
+        if(!$requestData) $requestData = $_SERVER;
 
-        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $this->initializeHeaders($requestData);
+        $this->request_method = RequestMethod::tryFrom(strtolower($requestData['REQUEST_METHOD']));
+
+        $url = (isset($requestData['HTTPS']) && $requestData['HTTPS'] === 'on' ? "https" : "http") . "://$requestData[HTTP_HOST]$requestData[REQUEST_URI]";
 
         $this->url = new UrlImmutable($url);
 
@@ -239,14 +242,17 @@ class Request
     /**
      * Initializes the header array
      *
+     * @param null|array $requestData
      * @return void
-     * @since 1.0.0-alpha
+     * @since 2.2.0-alpha
      */
-    private function initializeHeaders()
+    private function initializeHeaders(?array $requestData = null)
     {
+        if(!$requestData) $requestData = $_SERVER;
+
         $headers = [];
 
-        foreach($_SERVER as $key => $value) {
+        foreach($requestData as $key => $value) {
             if(str_starts_with($key, "HTTP_")) {
                 $header_name = ucwords(str_replace('_', '-', strtolower(substr($key, 5))), '-');
                 $headers[$header_name] = $value;

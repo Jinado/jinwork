@@ -115,10 +115,10 @@ class UrlImmutable
     }
 
     /**
-     * @return ?array
+     * @return array
      * @since 1.0.0-alpha
      */
-    public function getParsedQuery(): ?array
+    public function getParsedQuery(): array
     {
         return $this->parsed_query;
     }
@@ -175,10 +175,10 @@ class UrlImmutable
 
         $this->scheme = $parsed_url['scheme'] ?? null;
         $this->host = $parsed_url['host'] ?? null;
-        $this->port = $parsed_url['port'] ?? null;
+        $this->port = $parsed_url['port'] ?? 80;
         $this->username = $parsed_url['user'] ?? null;
         $this->password = $parsed_url['pass'] ?? null;
-        $this->path = $parsed_url['path'] ?? null;
+        $this->path = $parsed_url['path'] ?? '/';
         $this->fragment = $parsed_url['fragment'] ?? null;
         $this->raw_query = $parsed_url['query'] ?? null;
         $this->parsed_query = [];
